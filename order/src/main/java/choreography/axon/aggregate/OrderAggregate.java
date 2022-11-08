@@ -27,7 +27,7 @@ public class OrderAggregate {
     public OrderAggregate(){}
 
     @CommandHandler
-    public void handle(OrderCommand command){
+    public OrderAggregate(OrderCommand command){
         OrderCreatedEvent event = new OrderCreatedEvent();
         BeanUtils.copyProperties(command, event);     
         apply(event);

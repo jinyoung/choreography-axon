@@ -39,9 +39,9 @@ public class ExchangeAggregate {
         BeanUtils.copyProperties(command, event);     
         apply(event);
 
-        ExchangeCompensatedEvent event = new ExchangeCompensatedEvent();
-        BeanUtils.copyProperties(command, event);     
-        apply(event);
+        // ExchangeCompensatedEvent event = new ExchangeCompensatedEvent();
+        // BeanUtils.copyProperties(command, event);     
+        // apply(event);
 
     }
 
