@@ -9,11 +9,18 @@ import org.axonframework.spring.stereotype.Aggregate;
 import org.springframework.beans.BeanUtils;
 import java.util.List;
 
+import lombok.Data;
+import lombok.ToString;
+
+
 
 import choreography.axon.command.*;
 import choreography.axon.event.*;
 
+
 @Aggregate
+@Data
+@ToString
 public class OrderAggregate {
 
     @AggregateIdentifier
@@ -38,6 +45,26 @@ public class OrderAggregate {
     public void handle(CancelCommand command){
     }
 
+    @CommandHandler
+    public void handle(RejectCommand command){
+        OrderRejectedEvent event = new OrderRejectedEvent();
+        BeanUtils.copyProperties(command, event);     
+        apply(event);
+
+    }
+
+    @CommandHandler
+    public void handle(ApproveCommand command){
+        OrderPlacedEvent event = new OrderPlacedEvent();
+        BeanUtils.copyProperties(command, event);     
+        apply(event);
+
+    }
+
+
+
+
+
 
 
     @EventSourcingHandler
@@ -55,50 +82,6 @@ public class OrderAggregate {
     @EventSourcingHandler
     public void on(OrderRejectedEvent event) {
         BeanUtils.copyProperties(event, this);
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public String getCurrencyId() {
-        return currencyId;
-    }
-
-    public void setCurrencyId(String currencyId) {
-        this.currencyId = currencyId;
-    }
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
-    }
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-    public String getHolderId() {
-        return holderId;
-    }
-
-    public void setHolderId(String holderId) {
-        this.holderId = holderId;
-    }
-    public String getTestId() {
-        return testId;
-    }
-
-    public void setTestId(String testId) {
-        this.testId = testId;
     }
 
 

@@ -42,7 +42,7 @@ public class OrderController {
 
 
   @RequestMapping(value = "/order/cancel",
-        method = RequestMethod.POST,
+        method = RequestMethod.DELETE,
         produces = "application/json;charset=UTF-8")
   public void cancel(@RequestBody CancelCommand cancelCommand)
         throws Exception {
@@ -50,6 +50,30 @@ public class OrderController {
 
       // send command
       commandGateway.send(cancelCommand);
+  }
+
+
+  @RequestMapping(value = "/order/reject",
+        method = RequestMethod.POST,
+        produces = "application/json;charset=UTF-8")
+  public void reject(@RequestBody RejectCommand rejectCommand)
+        throws Exception {
+      System.out.println("##### /order/reject  called #####");
+
+      // send command
+      commandGateway.send(rejectCommand);
+  }
+
+
+  @RequestMapping(value = "/order/approve",
+        method = RequestMethod.POST,
+        produces = "application/json;charset=UTF-8")
+  public void approve(@RequestBody ApproveCommand approveCommand)
+        throws Exception {
+      System.out.println("##### /order/approve  called #####");
+
+      // send command
+      commandGateway.send(approveCommand);
   }
 
 }
