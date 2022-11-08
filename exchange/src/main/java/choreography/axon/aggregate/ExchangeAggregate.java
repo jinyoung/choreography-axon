@@ -47,6 +47,10 @@ public class ExchangeAggregate {
 
 
 
+
+
+
+
     @EventSourcingHandler
     public void on(ExchangeSucceededEvent event) {
         BeanUtils.copyProperties(event, this);

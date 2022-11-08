@@ -18,24 +18,24 @@ import choreography.axon.event.*;
 import choreography.axon.aggregate.*;
 
 @Service
-@ProcessingGroup("exchange_Policy")
+@ProcessingGroup("deadline_Policy")
 public class PolicyHandler{
 
     @Autowired
     CommandGateway commandGateway;
 
     @EventHandler
-    public void wheneverOrderCreated_Exchange(OrderCreatedEvent orderCreated){
+    public void wheneverOrderCreated_Schedule(OrderCreatedEvent orderCreated){
         System.out.println(orderCreated.toString());
 
-        ExchangeCommand command = new ExchangeCommand();
+        ScheduleCommand command = new ScheduleCommand();
         commandGateway.send(command);
     }
     @EventHandler
-    public void wheneverOrderRejected_Compensate(OrderRejectedEvent orderRejected){
-        System.out.println(orderRejected.toString());
+    public void wheneverOrderPlaced_RemoveDeadline(OrderPlacedEvent orderPlaced){
+        System.out.println(orderPlaced.toString());
 
-        CompensateCommand command = new CompensateCommand();
+        RemoveDeadlineCommand command = new RemoveDeadlineCommand();
         commandGateway.send(command);
     }
 

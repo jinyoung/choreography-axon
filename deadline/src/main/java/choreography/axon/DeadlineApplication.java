@@ -8,9 +8,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
-public class PointApplication {
+public class DeadlineApplication {
     protected static ApplicationContext applicationContext;
     public static void main(String[] args) {
-        applicationContext = SpringApplication.run(PointApplication.class, args);
+        applicationContext = SpringApplication.run(DeadlineApplication.class, args);
     }
 }

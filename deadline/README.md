@@ -1,70 +1,48 @@
-# deadline
+### Run axon server firstly
 
-## Running in local development environment
+You need the Axon server to run this application.
+You can download the Axon server from below url:
+https://axoniq.io/download  
 
-```
-go mod init deadline
-go mod tidy 
-go build main.go
-./main
 
 ```
 
-## Packaging and Running in docker environment
-
-```
-docker build -t username/deadline:latest .
-docker run username/deadline:latest
+cd axon-server
+java -jar axonserver-4.3.5.jar
 ```
 
-## Push images and running in Kubernetes
+axon server UI  
+http://localhost:8024  
+
+or You can run the axon server with docker:
 
 ```
-docker login 
-# in case of docker hub, enter your username and password
-
-docker push username/deadline:latest
+docker run -d --name my-axon-server -p 8024:8024 -p 8124:8124 axoniq/axonserver
 ```
 
-Edit the deployment.yaml under the /kubernetes directory:
-```
-    spec:
-      containers:
-        - name: deadline
-          image: username/deadline:latest   # change this image name
-          ports:
-            - containerPort: 8080
+---
+--
+
+### 실행시 주의점.  
+1. 템플릿 엔진으로 만들어진 파일로는 정상적으로 실행이 안됩니다.  
+Aggregate 파일에서 Create 하는 Command 를 꼭 생성자로 커맨드를 발행하여 주세요.  
+
+!! 업데이트,DELETE 쪽은 생성자로 하시면 에러가 발생함  
+
+````java
+@CommandHandler
+public OrderAggregate(OrderPlacedCommand command){
+    OrderPlacedEvent orderPlaced = new OrderPlacedEvent();
+    orderPlaced.setId(command.getId());
+    AggregateLifecycle.apply(orderPlaced);
+}
+````
+
+2. controller 에서 command 를 구현하여 주어야 합니다.  
+
+3. axon 서버는 ID 값을 기준으로 이벤트를 소싱 하기 때문에 아래와 같은 에러가 발생시 ID 값을 중복으로 POST 한 것은 아닌지 확인해 보시길 바랍니다.   
 
 ```
-
-Apply the yaml to the Kubernetes:
+CommandExecutionException(OUT_OF_RANGE: [AXONIQ-2000] Invalid sequence number 0 for aggregate 2, expected 1)
 ```
-kubectl apply -f kubernetes/deployment.yaml
-```
-
-See the pod status:
-```
-kubectl get pods -l app=deadline
-```
-
-If you have no problem, you can connect to the service by opening a proxy between your local and the kubernetes by using this command:
-```
-# new terminal
-kubectl port-forward deploy/deadline 8080:8080
-
-# another terminal
-http localhost:8080
-```
-
-If you have any problem on running the pod, you can find the reason by hitting this:
-```
-kubectl logs -l app=deadline
-```
-
-Following problems may be occurred:
-
-1. ImgPullBackOff:  Kubernetes failed to pull the image with the image name you've specified at the deployment.yaml. Please check your image name and ensure you have pushed the image properly.
-1. CrashLoopBackOff: The spring application is not running properly. If you didn't provide the kafka installation on the kubernetes, the application may crash. Please install kafka firstly:
-
-https://labs.msaez.io/#/courses/cna-full/full-course-cna/ops-utility
 

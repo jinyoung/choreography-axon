@@ -18,17 +18,17 @@ import choreography.axon.event.*;
 import choreography.axon.aggregate.*;
 
 @Service
-@ProcessingGroup("exchange_Policy")
+@ProcessingGroup("point_Policy")
 public class PolicyHandler{
 
     @Autowired
     CommandGateway commandGateway;
 
     @EventHandler
-    public void wheneverOrderCreated_Exchange(OrderCreatedEvent orderCreated){
-        System.out.println(orderCreated.toString());
+    public void wheneverExchangeSucceeded_UsePoint(ExchangeSucceededEvent exchangeSucceeded){
+        System.out.println(exchangeSucceeded.toString());
 
-        ExchangeCommand command = new ExchangeCommand();
+        UsePointCommand command = new UsePointCommand();
         commandGateway.send(command);
     }
     @EventHandler
