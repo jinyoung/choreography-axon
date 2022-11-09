@@ -1,6 +1,7 @@
-package choreography.axon.infra;
+package choreography.axon.query;
 
 
+import choreography.axon.event.*;
 
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
@@ -24,7 +25,7 @@ public class OrderStatusQueryHandler {
     }
 
     @EventHandler
-    public void on(OrderCreated orderCreated) {
+    public void on(OrderCreatedEvent orderCreated) {
 
     OrderStatus orderStatus = new OrderStatus();
 
@@ -37,14 +38,27 @@ public class OrderStatusQueryHandler {
 
 
     @EventHandler
-    public void on(ExchangeSucceeded exchangeSucceeded) {
-        if (!exchangeSucceeded.validate()) return;
+    public void on(ExchangeSucceededEvent exchangeSucceeded) {
             // view 객체 조회
         OrderStatus orderStatus = data.getOrDefault(exchangeSucceeded.getOrderId(), null);
 
         if( orderStatus != null) {
                 
             orderStatus.setStatus("EXCHANGED");    
+            // view 레파지 토리에 save
+                data.put(orderStatus.getId(), orderStatus);
+            }
+
+
+    }
+    @EventHandler
+    public void on(PointUsedEvent pointUsed) {
+            // view 객체 조회
+        OrderStatus orderStatus = data.getOrDefault(pointUsed.getOrderId(), null);
+
+        if( orderStatus != null) {
+                
+            orderStatus.setStatus("APPROVED");    
             // view 레파지 토리에 save
                 data.put(orderStatus.getId(), orderStatus);
             }
